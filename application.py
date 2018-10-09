@@ -101,7 +101,7 @@ def signout():
     session.clear()
     return redirect("/")
 
-@app.route("/search", methods =["GET", "POST"])
+@app.route("/search", methods =["GET"])
 def search():
 
     # If request method is GET, show user the search form
