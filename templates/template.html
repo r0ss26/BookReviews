@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/css/bootstrap.min.css" integrity="sha384-MCw98/SFnGE8fJT3GXwEOngsV7Zt27NXFoaoApmYm81iuXoPkFOJwJ8ERdknLPMO"
+        crossorigin="anonymous">
+</head>
+
+<body>
+    <header>
+
+        <!-- Navigation bar appears on each page-->
+        <nav class="navbar navbar-dark bg-dark navbar-expand-sm">
+            <a class="navbar-brand" href="{{ url_for('index')}}">BookReviews</a>
+            {% if session.user_id == NULL %}
+            <ul class="navbar-nav">
+                <li class="nav-item"><a id="register-link" href="{{ url_for('register')}}" class="nav-link">Register</a></li>
+                <li id="signin-link" class="nav-item"><a href="{{ url_for('signin')}}" class="nav-link">Sign In</a></li>
+            </ul>
+            {% else %}
+            <ul class="navbar-nav">
+                <li id="signout-link" class="nav-item"><a href="{{ url_for('signout')}}" class="nav-link">Sign Out</a></li>
+            </ul>
+            {% endif %}
+        </nav>
+        {% block title %}
+        {% endblock %}
+        {% block form_alert %}
+        {% endblock %}
+    </header>
+    {% block body %}
+    {% endblock %}
+
+    <!-- JS for bootstrap-->
+    <script src="https://code.jquery.com/jquery-3.2.1.slim.min.js" integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN"
+        crossorigin="anonymous"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js" integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q"
+        crossorigin="anonymous"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js" integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl"
+        crossorigin="anonymous"></script>
+
+</body>
+
+</html>
