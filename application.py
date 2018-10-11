@@ -107,3 +107,9 @@ def search():
     # If request method is GET, show user the search form
     if request.method == "GET":
         return render_template("search.html")
+    else:
+        search_query = request.form.get("search-books") 
+        result = db.execute(
+            "SELECT * FROM books WHERE isbn LIKE "search_query" OR title LIKE "search_query" OR author LIKE "search_query" WHERE search_query = :search_query", 
+            {"search_query": search_query})
+        print(result)
