@@ -115,4 +115,3 @@ def search():
         # Search the database and store the results
         result = db.execute("SELECT * FROM books WHERE title LIKE :search_query OR author LIKE :search_query OR isbn LIKE :search_query", { "search_query": '%' + search_query + '%'}).fetchall()
         return render_template("search.html", result=result)
-
