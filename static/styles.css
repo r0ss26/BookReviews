@@ -1,0 +1,7 @@
+.search-table-head {
+    background-color: #5086B6;
+}
+
+.onhover-lightblue tr:hover {
+    background-color: #B4C4E4 !important;
+}

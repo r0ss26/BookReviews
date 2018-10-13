@@ -2,9 +2,11 @@
 <html>
 
 <head>
+    <!-- Style Sheets -->
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/css/bootstrap.min.css" integrity="sha384-MCw98/SFnGE8fJT3GXwEOngsV7Zt27NXFoaoApmYm81iuXoPkFOJwJ8ERdknLPMO"
         crossorigin="anonymous">
+    <link rel="stylesheet" type="text/css" href="static/styles.css">
 </head>
 
 <body>
@@ -13,6 +15,8 @@
         <!-- Navigation bar appears on each page-->
         <nav class="navbar navbar-dark bg-dark navbar-expand-sm">
             <a class="navbar-brand" href="{{ url_for('index')}}">BookReviews</a>
+
+            <!-- Check if user is signed in to display correct links in navigation bar -->
             {% if session.user_id == NULL %}
             <ul class="navbar-nav">
                 <li class="nav-item"><a id="register-link" href="{{ url_for('register')}}" class="nav-link">Register</a></li>
@@ -24,13 +28,19 @@
             </ul>
             {% endif %}
         </nav>
+
+        <!-- Page Title -->
         {% block title %}
         {% endblock %}
+
+        <!-- Place holder for error message -->
         {% if error_message %}
         {% block form_alert %}
         {% endblock %}
         {% endif %}
+
     </header>
+
     {% block body %}
     {% endblock %}
 

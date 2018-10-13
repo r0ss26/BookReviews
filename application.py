@@ -107,9 +107,12 @@ def search():
     # If request method is GET, show user the search form
     if request.method == "GET":
         return render_template("search.html")
+    # Otherwise the request method is POST, search the database for the users input
+    # and return the data to the search template
     else:
-        search_query = request.form.get("search-books") 
-        result = db.execute(
-            "SELECT * FROM books WHERE isbn LIKE "search_query" OR title LIKE "search_query" OR author LIKE "search_query" WHERE search_query = :search_query", 
-            {"search_query": search_query})
-        print(result)
+        # Get the users search inupt
+        search_query = request.form['search-books']
+        # Search the database and store the results
+        result = db.execute("SELECT * FROM books WHERE title LIKE :search_query OR author LIKE :search_query OR isbn LIKE :search_query", { "search_query": '%' + search_query + '%'}).fetchall()
+        return render_template("search.html", result=result)
+
