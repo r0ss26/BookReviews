@@ -15,7 +15,7 @@ if not os.getenv("DATABASE_URL"):
 engine = create_engine(os.getenv("DATABASE_URL"))
 db = scoped_session(sessionmaker(bind=engine))
 
-
+# Import books into database
 def main():
     f = open("books.csv")
     reader = csv.reader(f)

@@ -1,17 +1,22 @@
 {% extends "template.html" %}
+
+<!-- A title -->
 {% block title %}
 <h1 style="text-align: center">Register</h1>
 {% endblock %}
 
+<!-- Display error message if input validation fails -->
 {% block form_alert %}
 <div class="alert alert-danger" style="text-align: center">{{ error_message }}</div>
 {% endblock %}
 
 {% block body %}
+<!-- Sign up form-->
 <div class="container">
     <form action="{{ url_for('register') }}" method="POST">
         <div class="row form-group">
             <div class="col"></div>
+            <!-- Username -->
             <div class="col">
                 <label for="register-username">User Name</label>
                 <input type="text" class="form-control" name="register-username">
@@ -20,6 +25,7 @@
         </div>
         <div class="row form-group">
             <div class="col"></div>
+            <!-- Email -->
             <div class="col">
                 <label for="register-email">E-mail Address</label>
                 <input type="email" class="form-control" name="register-email">
@@ -28,6 +34,7 @@
         </div>
         <div class="row form-group">
             <div class="col"></div>
+            <!-- Password -->
             <div class="col">
                 <label for="register-password">Password</label>
                 <input type="password" class="form-control" name="register-password">
@@ -36,6 +43,7 @@
         </div>
         <div class="row form-group">
             <div class="col"></div>
+            <!-- Confirm password -->
             <div class="col">
                 <label for="register-password-confirm">Re-Enter Password</label>
                 <input type="password" class="form-control" name="register-password-confirm">
@@ -44,6 +52,7 @@
         </div>
         <div class="row form-group">
             <div class="col"></div>
+            <!-- Submit button -->
             <div class="col">
                 <button type="submit" class="btn btn-primary">Submit</button>
             </div>

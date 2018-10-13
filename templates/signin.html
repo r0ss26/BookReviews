@@ -1,17 +1,21 @@
 {% extends "template.html" %}
+<!-- A title -->
 {% block title %}
 <h1 style="text-align: center">Sign In</h1>
 {% endblock %}
 
+<!-- Error message for login validation -->
 {% block form_alert %}
 <div class="alert alert-danger" style="text-align: center">{{ error_message }}</div>
 {% endblock %}
 
+<!-- Login fields -->
 {% block body %}
 <form action="{{ url_for('signin') }}" method="post">
     <div class="container">
         <div class="row form-group">
             <div class="col"></div>
+            <!-- Username -->
             <div class="col">
                 <label for="signin-username">User Name</label>
                 <input type="text" class="form-control" name="signin-username">
@@ -20,6 +24,7 @@
         </div>
         <div class="row form-group">
             <div class="col"></div>
+            <!-- Password -->
             <div class="col">
                 <label for="signin-password">Password</label>
                 <input type="password" class="form-control" name="signin-password">
@@ -28,6 +33,7 @@
         </div>
         <div class="row form-group">
             <div class="col"></div>
+            <!-- Submit -->
             <div class="col">
                 <button type="submit" class="btn btn-primary">Submit</button>
             </div>
@@ -35,6 +41,7 @@
         </div>
 </form>
 
+<!-- Call to creat an account -->
 <div style="text-align: center">
     Don't have an account?
     <a href="{{ url_for('register') }}">Sign up here</a>

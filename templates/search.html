@@ -5,6 +5,7 @@
 {% endblock %}
 
 {% block body %}
+<!-- A form for searching the book database -->
 <form action="{{ url_for('search') }}" method="post">
     <div class="container">
         <div class="row form-group">
@@ -24,9 +25,12 @@
     </div>
 </form>
 
-{% if result == [] %}
+<!-- If the user hasn't submitted the form, don't show the search table -->
+{% if not result %}
+<!-- Inform the user if their serach yields no results -->
+{% elif result == [] %}
 <div class="alert alert-danger" style="text-align: center">No matching results</div>
-{% elif not result %}
+<!-- Otherwise display the search results in a table -->
 {% else %}
 <div>
     <table class="table search-table">
