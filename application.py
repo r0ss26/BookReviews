@@ -1,6 +1,6 @@
 import os
 
-from flask import Flask, session, render_template, redirect, request
+from flask import Flask, session, render_template, redirect, request, url_for
 from flask_session import Session
 from sqlalchemy import create_engine
 from sqlalchemy.orm import scoped_session, sessionmaker
@@ -101,17 +101,29 @@ def signout():
     session.clear()
     return redirect("/")
 
-@app.route("/search", methods =["GET", "POST"])
+@app.route("/search", methods=["GET", "POST"])
 def search():
 
     # If request method is GET, show user the search form
     if request.method == "GET":
         return render_template("search.html")
     # Otherwise the request method is POST, search the database for the users input
-    # and return the data to the search template
+    # and pass the data to the results page template
     else:
         # Get the users search inupt
         search_query = request.form['search-books']
-        # Search the database and store the results
-        result = db.execute("SELECT * FROM books WHERE title LIKE :search_query OR author LIKE :search_query OR isbn LIKE :search_query", { "search_query": '%' + search_query + '%'}).fetchall()
-        return render_template("search.html", result=result)
+        # Search the database and store the results in a session variable to pass to results page
+        session["result"] = db.execute(
+            "SELECT * FROM books WHERE title LIKE :search_query OR author LIKE :search_query OR isbn LIKE :search_query", 
+            { "search_query": '%' + search_query + '%'}).fetchall()
+        return redirect(url_for("search_results"))
+
+@app.route("/results", methods=["GET"])
+def search_results():
+    ## If there are no matching results display an error message
+    if session["result"] == []:
+        return render_template("no_search_results.html", error_message="No matching books found")
+    ## Otherwise display the results in a table
+    else:
+        print(session["result"])
+        return render_template("search_results.html", result=session["result"])

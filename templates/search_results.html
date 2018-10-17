@@ -1,0 +1,27 @@
+{% extends "template.html" %}
+
+{% block body %}
+<div>
+    <table class="table search-table">
+        <thead class="search-table-head">
+            <tr>
+                <th scope="col">Title</th>
+                <th scope="col">Author</th>
+                <th scope="col">Year</th>
+                <th scope="col">ISBN</th>
+            </tr>
+        </thead>
+        <tbody class="onhover-lightblue">
+
+            {% for id, isbn, title, author, year in result %}
+            <tr class="search-result">
+                <td>{{ title }}</td>
+                <td>{{ author }}</td>
+                <td>{{ year }}</td>
+                <td>{{ isbn }}</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+{% endblock %}

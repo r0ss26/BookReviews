@@ -11,50 +11,17 @@
         <div class="row form-group">
             <div class="col"></div>
             <div class="col">
-                <input type="text" class="form-control" name="search-books" value="Author / Title / ISBN">
+                <input type="text" class="form-control" name="search-books" placeholder="Author / Title / ISBN">
             </div>
             <div class="col"></div>
         </div>
         <div class="row form-group">
             <div class="col"></div>
             <div class="col">
-                <button type="submit" class="btn btn-primary" name="submit-search" placeholder="Title / Author / ISBN">Search</button>
+                <button type="submit" class="btn btn-primary" name="submit-search">Search</button>
             </div>
             <div class="col"></div>
         </div>
     </div>
 </form>
-
-<!-- If the user hasn't submitted the form, don't show the search table -->
-{% if not result %}
-<!-- Inform the user if their serach yields no results -->
-{% elif result == [] %}
-<div class="alert alert-danger" style="text-align: center">No matching results</div>
-<!-- Otherwise display the search results in a table -->
-{% else %}
-<div>
-    <table class="table search-table">
-        <thead class="search-table-head">
-            <tr>
-                <th scope="col">Title</th>
-                <th scope="col">Author</th>
-                <th scope="col">Year</th>
-                <th scope="col">ISBN</th>
-            </tr>
-        </thead>
-        <tbody class="onhover-lightblue">
-
-            {% for id, isbn, title, author, year in result %}
-            <tr>
-                <td>{{ title }}</td>
-                <td>{{ author }}</td>
-                <td>{{ year }}</td>
-                <td>{{ isbn }}</td>
-            </tr>
-            {% endfor %}
-        </tbody>
-    </table>
-</div>
-{% endif %}
-
 {% endblock %}
