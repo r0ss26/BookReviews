@@ -1,5 +1,6 @@
 {% extends "template.html" %}
 
+<!-- display a table with the search results -->
 {% block body %}
 <div>
     <table class="table search-table">
@@ -14,7 +15,7 @@
         <tbody class="onhover-lightblue">
 
             {% for id, isbn, title, author, year in result %}
-            <tr class="search-result">
+            <tr class="search-result" data-href="/book_page?book_id={{ id }}&isbn={{ isbn }}&title={{ title }}&author={{ author }}&year={{ year }}">
                 <td>{{ title }}</td>
                 <td>{{ author }}</td>
                 <td>{{ year }}</td>

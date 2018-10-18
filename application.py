@@ -127,3 +127,12 @@ def search_results():
     else:
         print(session["result"])
         return render_template("search_results.html", result=session["result"])
+
+@app.route("/book_page", methods=["GET"])        
+def book_details():
+    book_id = request.args.get("book_id")
+    title = request.args.get("title")
+    author = request.args.get("author")
+    year = request.args.get("year")
+    isbn = request.args.get("isbn")
+    return render_template("book_page.html", title=title, author=author, publish_date=year, isbn=isbn)

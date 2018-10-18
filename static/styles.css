@@ -5,3 +5,11 @@
 .onhover-lightblue tr:hover {
     background-color: #B4C4E4 !important;
 }
+
+.review-field {
+    margin: 40px;
+}
+
+#h4 {
+    padding: 10px;
+}
