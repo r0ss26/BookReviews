@@ -6,10 +6,22 @@
     background-color: #B4C4E4 !important;
 }
 
-.review-field {
-    margin: 40px;
+.search-result {
+    cursor: pointer;
+}
+
+.review-submit-button {
+    padding-top: 10px;
+}
+
+.review-form {
+    padding: 0px;
 }
 
 #h4 {
     padding: 10px;
+}
+
+.star_rating {
+    margin: 10px;
 }

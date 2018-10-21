@@ -8,10 +8,69 @@
 <h3 id="isbn" style="text-align: center">ISBN: {{ isbn }}</h3>
 {% endblock %}
 
+{% block form_alert %}
+<div class="alert alert-danger" style="text-align: center">{{ error_message }}</div>
+{% endblock %}
+
 {% block body %}
-<div class="form-group">
-    <h4>Write a review for {{ title }}:</h4>
-    <textarea class="form-control review-field" rows="5" id="review-field"></textarea>
-    <button class="btn btn-primary text-center" type="submit">Submit Review</button>
+<div class="container">
+    <div class="row">
+        <div class="col"></div>
+        <div class="col text-center">
+            <h4>GoodReads</h4>
+        </div>
+        <div class="col"></div>
+    </div>
+    <div class="row">
+        <div class="col"></div>
+        <div class="col text-center">
+            No. GoodReads Ratings: {{ ratings_count }} <br>
+            Average GoodReads Rating: {{ average_rating }} / 5
+        </div>
+        <div class="col"></div>
+    </div>
+    <div class="row">
+        <div class="col"></div>
+        <div class="col text-center">
+            <h4>Reviews</h4>
+        </div>
+        <div class="col"></div>
+    </div>
+    {% for review_id, user_id, isbn, review, star_rating in reviews %}
+    <div class="row">
+        <div class="col"></div>
+        <div class="col text-center">
+            "{{ review }}"
+            {{ star_rating }} / 5
+        </div>
+        <div class="col"></div>
+    </div>
+    {% endfor %}
+    <div class="row">
+        <div class="col"></div>
+        <h4>Write a review for {{ title }}:</h4>
+        <div class="col"></div>
+    </div>
+    <div class="row">
+        <div class="col">
+            <div class="form-group">
+                <form name="review-field" method="post" class="review-form">
+                    <textarea name="review" class="form-control review-field" rows="5" id="review-field"></textarea>
+                    <div class="row review-submit-button">
+                        <div class="col"></div>
+                        <label for="star_rating" class="star_rating">Star Rating (1-5)</label>
+                        <input name="star_rating" id="star_rating" class="star_rating" type="number" min="1" max="5"
+                            for="review-field">
+                        <div class="col"></div>
+                    </div>
+                    <div class="row review-submit-button">
+                        <div class="col"></div>
+                        <button class="btn btn-primary" type="submit" for="review-field">Submit Review</button>
+                        <div class="col"></div>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
 </div>
 {% endblock %}
