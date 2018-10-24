@@ -1,6 +1,6 @@
 import os
 
-from flask import Flask, session, render_template, redirect, request, url_for
+from flask import Flask, session, render_template, redirect, request, url_for, jsonify
 from flask_session import Session
 from sqlalchemy import create_engine
 from sqlalchemy.orm import scoped_session, sessionmaker
@@ -23,7 +23,6 @@ Session(app)
 engine = create_engine(os.getenv("DATABASE_URL"))
 db = scoped_session(sessionmaker(bind=engine))
 
-
 @app.route("/")
 def index():
 
@@ -31,6 +30,7 @@ def index():
     if not session.get("user_id"):
         return redirect("/signin")
     else:
+
         # If user is signed in take them to the search page
         return redirect("/search")
 
@@ -109,28 +109,43 @@ def search():
 
     # If request method is GET, show user the search form
     if request.method == "GET":
-        return render_template("search.html")
+
+        # If the user has already made a search which doesn't return any results
+        # then show an error message
+        if session.get('no_results'):
+            session['no_results'] = None
+            return render_template("search.html", error_message="No matching results")
+        
+        # Otherwise show the search form
+        else:
+            return render_template("search.html")
+
     # Otherwise the request method is POST, search the database for the users input
     # and pass the data to the results page template
     else:
+
         # Get the users search inupt
         search_query = request.form['search-books']
+
         # Search the database and store the results in a session variable to pass to results page
         session["result"] = db.execute(
             "SELECT * FROM books WHERE UPPER(title) LIKE UPPER(:search_query) OR author LIKE :search_query OR isbn LIKE :search_query", 
             { "search_query": '%' + search_query + '%'}).fetchall()
+
         return redirect(url_for("search_results"))
 
 @app.route("/results", methods=["GET"])
 @login_required
 def search_results():
-    # If there are no matching results display an error message
-    if session["result"] == []:
-        return render_template("no_search_results.html", error_message="No matching books found")
-    # Otherwise display the results in a table
-    else:
-        print(session["result"])
-        return render_template("search_results.html", result=session["result"])
+
+        # If the the search returned no results then redirect the user to the search page
+        if session["result"] == []:
+            session['no_results'] = "No matching books"
+            return redirect(url_for("search"))
+        
+        # Otherwise display the results
+        else:
+            return render_template("search_results.html", result=session["result"])
 
 @app.route("/book_page", methods=["GET", "POST"]) 
 @login_required
@@ -158,6 +173,7 @@ def book_details():
 
     # If request method is "GET" return the template for the requested book
     if request.method == "GET":
+
         # If the book has reviews then display them, otherwise don't
         if reviews:
             return render_template("book_page.html", title=title, author=author, 
@@ -168,30 +184,47 @@ def book_details():
 
     # Otherwise the request method is "POST" and the user has submitted a review
     else:
+
+        # Check that user input a star rating
+        if not request.form.get("star_rating"):
+            return render_template("book_page.html", reviews=reviews, title=title, author=author, 
+            publish_date=year, isbn=isbn, ratings_count=ratings_count, average_rating=average_rating, 
+            error_message="Please enter a star rating")
+
+        # Check that user input a review
+        if not request.form.get("review"):
+            return render_template("book_page.html", reviews=reviews, title=title, author=author, 
+            publish_date=year, isbn=isbn, ratings_count=ratings_count, average_rating=average_rating, 
+            error_message="Please enter a review")
+
         # Check if the user has already reviewed the book
         try:
             db.execute(
                     "SELECT * FROM reviews WHERE user_id = :user_id AND isbn = :isbn", 
                     {"user_id": user_id, "isbn": isbn})
-            # If they haven't then commit the review into the database and return the user to the
-            # book template
+
+        # If the user has already reviewed the book then display an error message
+            return render_template("book_page.html", reviews=reviews, title=title, author=author, 
+            publish_date=year, isbn=isbn, ratings_count=ratings_count, average_rating=average_rating, 
+            error_message="You have already reviewed this book")
+
+        # If they haven't then commit the review into the database and return the user to the
+        # book template
+        except:
             db.execute(
                     "INSERT INTO reviews (user_id, isbn, review, star_rating) VALUES (:user_id, :isbn, :review, :star_rating)",
                     {"user_id": user_id, "isbn": isbn, "review": request.form['review'], "star_rating": request.form['star_rating']})
             reviews = db.execute("SELECT * FROM reviews WHERE isbn=:isbn", {"isbn": isbn})
             db.commit()
+
             return render_template("book_page.html", reviews=reviews, title=title, author=author, 
             publish_date=year, isbn=isbn, ratings_count=ratings_count, average_rating=average_rating)
-        # If the user has already reviewed the book then display an error message
-        except:
-            return render_template("book_page.html", reviews=reviews, title=title, author=author, 
-            publish_date=year, isbn=isbn, ratings_count=ratings_count, average_rating=average_rating, 
-            error_message="You have already reviewed this book")
-
+           
 
 @app.route("/api/<isbn>", methods=["GET"])
 def api_json(isbn):
     try:
+
         # Get book details and review statistics to display
         book_request = db.execute("SELECT reviews.isbn, title, author, year FROM books JOIN reviews ON books.isbn=reviews.isbn WHERE reviews.isbn=:isbn", {"isbn": isbn}).fetchone()
         book_stats = db.execute("SELECT COUNT(*) AS review_count, AVG(star_rating) AS average_score FROM reviews WHERE isbn=:isbn", {"isbn": isbn}).fetchone()
@@ -202,8 +235,9 @@ def api_json(isbn):
         review_count = book_stats[0]
         average_score = book_stats[1]
 
-        return render_template("json_api.html", isbn=isbn, title=title, author=author, year=year, 
-        review_count=review_count, average_score=average_score)
+        return jsonify(isbn=isbn, title=title, author=author, year=year, 
+        review_count=review_count, average_score=(int(average_score*1000)/1000))
+
     # If the book is not in the database return a 404 error
     except:
         return render_template("404.html"), 404

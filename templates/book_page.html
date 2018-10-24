@@ -1,20 +1,22 @@
 {% extends "template.html" %}
 
-<!-- Book Title -->
+<!-- Book Title and related details-->
 {% block title %}
-<h1 id="book-title" style="text-align: center">{{ title }}</h1>
-<h2 id="book-author" style="text-align: center">By: {{ author }}</h2>
-<h3 id="publish-date" style="text-align: center">Published: {{ publish_date }}</h3>
-<h3 id="isbn" style="text-align: center">ISBN: {{ isbn }}</h3>
+<h2 id="book-title" style="text-align: center">{{ title }}</h2>
+<h6 id="book-author" style="text-align: center">By: {{ author }}</h6>
+<h6 id="publish-date" style="text-align: center">Published: {{ publish_date }}</h6>
+<h6 id="isbn" style="text-align: center">ISBN: {{ isbn }}</h6>
 {% endblock %}
 
+<!-- Error message placeholder -->
 {% block form_alert %}
 <div class="alert alert-danger" style="text-align: center">{{ error_message }}</div>
 {% endblock %}
 
 {% block body %}
 <div class="container">
-    <div class="row">
+    <!-- Goodreads details -->
+    <div class="row padding-top-20px">
         <div class="col"></div>
         <div class="col text-center">
             <h4>GoodReads</h4>
@@ -24,29 +26,13 @@
     <div class="row">
         <div class="col"></div>
         <div class="col text-center">
-            No. GoodReads Ratings: {{ ratings_count }} <br>
+            # of GoodReads Ratings: {{ ratings_count }} <br>
             Average GoodReads Rating: {{ average_rating }} / 5
         </div>
         <div class="col"></div>
     </div>
-    <div class="row">
-        <div class="col"></div>
-        <div class="col text-center">
-            <h4>Reviews</h4>
-        </div>
-        <div class="col"></div>
-    </div>
-    {% for review_id, user_id, isbn, review, star_rating in reviews %}
-    <div class="row">
-        <div class="col"></div>
-        <div class="col text-center">
-            "{{ review }}"
-            {{ star_rating }} / 5
-        </div>
-        <div class="col"></div>
-    </div>
-    {% endfor %}
-    <div class="row">
+    <!-- User review input -->
+    <div class="row padding-top-20px">
         <div class="col"></div>
         <h4>Write a review for {{ title }}:</h4>
         <div class="col"></div>
@@ -58,7 +44,7 @@
                     <textarea name="review" class="form-control review-field" rows="5" id="review-field"></textarea>
                     <div class="row review-submit-button">
                         <div class="col"></div>
-                        <label for="star_rating" class="star_rating">Star Rating (1-5)</label>
+                        <label for="star_rating" class="star_rating" name="star_rating">Star Rating (1-5)</label>
                         <input name="star_rating" id="star_rating" class="star_rating" type="number" min="1" max="5"
                             for="review-field">
                         <div class="col"></div>
@@ -72,5 +58,33 @@
             </div>
         </div>
     </div>
+    <div class="row padding-top-20px">
+        <div class="col"></div>
+        <div class="col text-center">
+            <h4>Reviews</h4>
+        </div>
+        <div class="col"></div>
+    </div>
+    <!-- Display other users reviews if any -->
+    {% if reviews %}
+    {% for review_id, user_id, isbn, review, star_rating in reviews %}
+    <div class="row">
+        <div class="col"></div>
+        <div class="col text-center">
+            "{{ review }}"
+            {{ star_rating }} / 5
+        </div>
+        <div class="col"></div>
+    </div>
+    {% endfor %}
+    {% else %}
+    <div class="row">
+        <div class="col"></div>
+        <div class="col text-center">
+            No reviews
+        </div>
+        <div class="col"></div>
+    </div>
+    {% endif %}
 </div>
 {% endblock %}

@@ -1,16 +1,23 @@
 {% extends "template.html" %}
 
+<!-- A title -->
 {% block title %}
-<h1 style="text-align: center">Search</h1>
+<h1 class="padded-title">Search</h1>
+{% endblock %}
+
+<!-- Error message placeholder -->
+{% block form_alert %}
+<div class="alert alert-danger" style="text-align: center">{{ error_message }}</div>
 {% endblock %}
 
 {% block body %}
 <!-- A form for searching the book database -->
-<form action="{{ url_for('search') }}" method="post">
-    <div class="container">
+<div class="container">
+    <form action="{{ url_for('search') }}" method="post">
         <div class="row form-group">
             <div class="col"></div>
             <div class="col">
+                <!-- Search box -->
                 <input type="text" class="form-control" name="search-books" placeholder="Author / Title / ISBN">
             </div>
             <div class="col"></div>
@@ -18,10 +25,11 @@
         <div class="row form-group">
             <div class="col"></div>
             <div class="col">
+                <!-- Submit button -->
                 <button type="submit" class="btn btn-primary" name="submit-search">Search</button>
             </div>
             <div class="col"></div>
         </div>
-    </div>
-</form>
+    </form>
+</div>
 {% endblock %}
