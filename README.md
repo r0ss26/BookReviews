@@ -2,7 +2,7 @@
 This web application allows users to signup, search for, rate and review books. Users are also able to read reviews left by others. The application incorporates the GoodReads API to display ratings from a wider audience.
 
 # URL
-https://bookreviews-heroku.herokuapp.com/ 
+https://bookrvw.herokuapp.com
 
 # Author
 Ross Baker  
