@@ -203,14 +203,8 @@ def book_details():
                     "SELECT * FROM reviews WHERE user_id = :user_id AND isbn = :isbn", 
                     {"user_id": user_id, "isbn": isbn})
 
-        # If the user has already reviewed the book then display an error message
-            return render_template("book_page.html", reviews=reviews, title=title, author=author, 
-            publish_date=year, isbn=isbn, ratings_count=ratings_count, average_rating=average_rating, 
-            error_message="You have already reviewed this book")
-
-        # If they haven't then commit the review into the database and return the user to the
-        # book template
-        except:
+            # If they haven't then commit the review into the database and return the user to the
+            # book template
             db.execute(
                     "INSERT INTO reviews (user_id, isbn, review, star_rating) VALUES (:user_id, :isbn, :review, :star_rating)",
                     {"user_id": user_id, "isbn": isbn, "review": request.form['review'], "star_rating": request.form['star_rating']})
@@ -219,7 +213,12 @@ def book_details():
 
             return render_template("book_page.html", reviews=reviews, title=title, author=author, 
             publish_date=year, isbn=isbn, ratings_count=ratings_count, average_rating=average_rating)
-           
+
+        except:        
+        # If the user has already reviewed the book then display an error message
+            return render_template("book_page.html", reviews=reviews, title=title, author=author, 
+            publish_date=year, isbn=isbn, ratings_count=ratings_count, average_rating=average_rating, 
+            error_message="You have already reviewed this book")
 
 @app.route("/api/<isbn>", methods=["GET"])
 def api_json(isbn):
