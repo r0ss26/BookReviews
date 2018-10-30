@@ -2,26 +2,30 @@
 
 <!-- Display a table with the search results -->
 {% block body %}
-<table class="table search-table">
-    <!-- Head for table -->
-    <thead class="search-table-head">
-        <tr>
-            <th scope="col">Title</th>
-            <th scope="col">Author</th>
-            <th scope="col">Year</th>
-            <th scope="col">ISBN</th>
-        </tr>
-    </thead>
-    <!-- Table body rows -->
-    <tbody class="onhover-lightblue">
-        {% for id, isbn, title, author, year in result %}
-        <tr class="search-result" data-href="/book_page?book_id={{ id }}&isbn={{ isbn }}&title={{ title }}&author={{ author }}&year={{ year }}">
-            <td>{{ title }}</td>
-            <td>{{ author }}</td>
-            <td>{{ year }}</td>
-            <td>{{ isbn }}</td>
-        </tr>
-        {% endfor %}
-    </tbody>
-</table>
+<div class="container">
+    <div class="row-xs-12">
+        <table class="table search-table">
+            <!-- Head for table -->
+            <thead class="search-table-head">
+                <tr>
+                    <th scope="col">Title</th>
+                    <th scope="col">Author</th>
+                    <th scope="col">Year</th>
+                    <th scope="col">ISBN</th>
+                </tr>
+            </thead>
+            <!-- Table body rows -->
+            <tbody class="onhover-lightblue">
+                {% for id, isbn, title, author, year in result %}
+                <tr class="search-result" data-href="/book_page?book_id={{ id }}&isbn={{ isbn }}&title={{ title }}&author={{ author }}&year={{ year }}">
+                    <td>{{ title }}</td>
+                    <td>{{ author }}</td>
+                    <td>{{ year }}</td>
+                    <td>{{ isbn }}</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
 {% endblock %}

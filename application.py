@@ -169,7 +169,6 @@ def book_details():
         reviews = db.execute("SELECT * FROM reviews WHERE isbn=:isbn", {"isbn": isbn}).fetchall()
     except:
         reviews = []
-    print(reviews)
 
     # If request method is "GET" return the template for the requested book
     if request.method == "GET":
