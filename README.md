@@ -5,7 +5,7 @@ This web application allows users to signup, search for, rate and review books. 
 https://bookrvw.herokuapp.com
 
 # API
-https://bookrvw.herokuapp.com/<isbn>
+https://bookrvw.herokuapp.com/(isbn)
 
 # Author
 Ross Baker  
