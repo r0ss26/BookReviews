@@ -7,6 +7,8 @@ https://bookrvw.herokuapp.com
 # API
 https://bookrvw.herokuapp.com/(isbn)
 
+e.g. https://bookrvw.herokuapp.com/0553803700
+
 # Author
 Ross Baker  
 Made for CS50 Web - Project 1  
