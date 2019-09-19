@@ -1,6 +1,6 @@
 import os
 
-from flask import Flask, session, render_template, redirect, request, url_for, jsonify
+from flask import Flask, session, render_template, redirect, request, url_for, jsonify, flash
 from flask_session import Session
 from sqlalchemy import create_engine
 from sqlalchemy.orm import scoped_session, sessionmaker
@@ -43,7 +43,7 @@ def register():
 
     # Otherwise request method is POST - validate the user input
     # and update the database
-    else: 
+    else:
 
         # Check that user has confirmed their password correctly
         if not (request.form.get('register-password') == request.form.get('register-password-confirm')):
@@ -52,18 +52,18 @@ def register():
 
             # Add users registration information into user database
             try:
-                db.execute("INSERT INTO users (username, email, hash) VALUES (:username, :email, :hash)", 
-                                    {"username": request.form.get("register-username"), 
-                                    "email": request.form.get("register-email"), 
+                db.execute("INSERT INTO users (username, email, hash) VALUES (:username, :email, :hash)",
+                                    {"username": request.form.get("register-username"),
+                                    "email": request.form.get("register-email"),
                                     "hash": generate_password_hash(request.form.get("register-password"))})
                 db.commit()
 
-            # Return an error if the username is taken    
+            # Return an error if the username is taken
             except:
-                return render_template("register.html", error_message="Username taken")  
+                return render_template("register.html", error_message="Username taken")
 
             # Remember which user has logged in
-            session["user_id"] = db.execute("SELECT id FROM users WHERE username = :username", 
+            session["user_id"] = db.execute("SELECT id FROM users WHERE username = :username",
                                             {"username": request.form.get("register-username")}).fetchone()
 
             # Redirect to homepage
@@ -76,25 +76,25 @@ def signin():
     if request.method == "GET":
         return render_template("signin.html")
 
-    # Otherwise request method is POST - validate user input against database    
+    # Otherwise request method is POST - validate user input against database
     else:
         rows = db.execute("SELECT * FROM users WHERE username = :username",
                           {"username": request.form.get("signin-username")}).fetchall()
-        
+
         # If username is not in database, inform the user
         if len(rows) != 1:
             return render_template("signin.html", error_message="Username is incorrect")
 
-        # If password does not match the password in database, inform the user    
+        # If password does not match the password in database, inform the user
         elif not check_password_hash(rows[0][2], request.form.get("signin-password")):
             return render_template("signin.html", error_message="Password is incorrect")
 
         # If username and password are validated store the user id in session and
-        # redirect user to the home page    
+        # redirect user to the home page
         else:
             session['user_id'] = rows[0][0]
             return redirect("/")
-        
+
 @app.route("/signout")
 @login_required
 def signout():
@@ -115,7 +115,7 @@ def search():
         if session.get('no_results'):
             session['no_results'] = None
             return render_template("search.html", error_message="No matching results")
-        
+
         # Otherwise show the search form
         else:
             return render_template("search.html")
@@ -129,7 +129,7 @@ def search():
 
         # Search the database and store the results in a session variable to pass to results page
         session["result"] = db.execute(
-            "SELECT * FROM books WHERE UPPER(title) LIKE UPPER(:search_query) OR author LIKE :search_query OR isbn LIKE :search_query", 
+            "SELECT * FROM books WHERE UPPER(title) LIKE UPPER(:search_query) OR author LIKE :search_query OR isbn LIKE :search_query",
             { "search_query": '%' + search_query + '%'}).fetchall()
 
         return redirect(url_for("search_results"))
@@ -142,12 +142,12 @@ def search_results():
         if session["result"] == []:
             session['no_results'] = "No matching books"
             return redirect(url_for("search"))
-        
+
         # Otherwise display the results
         else:
             return render_template("search_results.html", result=session["result"])
 
-@app.route("/book_page", methods=["GET", "POST"]) 
+@app.route("/book_page", methods=["GET", "POST"])
 @login_required
 def book_details():
 
@@ -159,7 +159,7 @@ def book_details():
     user_id = session['user_id']
 
     # Get review details from goodreads as JSON
-    review_counts = requests.get("https://www.goodreads.com/book/review_counts.json", 
+    review_counts = requests.get("https://www.goodreads.com/book/review_counts.json",
                         params={"key": os.getenv("KEY"), "isbns": isbn}).json()
     ratings_count = review_counts['books'][0]['work_ratings_count']
     average_rating = review_counts['books'][0]['average_rating']
@@ -175,10 +175,10 @@ def book_details():
 
         # If the book has reviews then display them, otherwise don't
         if reviews:
-            return render_template("book_page.html", title=title, author=author, 
+            return render_template("book_page.html", title=title, author=author,
             publish_date=year, isbn=isbn, reviews=reviews, ratings_count=ratings_count, average_rating=average_rating)
         else:
-            return render_template("book_page.html", title=title, author=author, 
+            return render_template("book_page.html", title=title, author=author,
             publish_date=year, isbn=isbn, ratings_count=ratings_count, average_rating=average_rating)
 
     # Otherwise the request method is "POST" and the user has submitted a review
@@ -186,20 +186,20 @@ def book_details():
 
         # Check that user input a star rating
         if not request.form.get("star_rating"):
-            return render_template("book_page.html", reviews=reviews, title=title, author=author, 
-            publish_date=year, isbn=isbn, ratings_count=ratings_count, average_rating=average_rating, 
+            return render_template("book_page.html", reviews=reviews, title=title, author=author,
+            publish_date=year, isbn=isbn, ratings_count=ratings_count, average_rating=average_rating,
             error_message="Please enter a star rating")
 
         # Check that user input a review
         if not request.form.get("review"):
-            return render_template("book_page.html", reviews=reviews, title=title, author=author, 
-            publish_date=year, isbn=isbn, ratings_count=ratings_count, average_rating=average_rating, 
+            return render_template("book_page.html", reviews=reviews, title=title, author=author,
+            publish_date=year, isbn=isbn, ratings_count=ratings_count, average_rating=average_rating,
             error_message="Please enter a review")
 
         # Check if the user has already reviewed the book
         try:
             db.execute(
-                    "SELECT * FROM reviews WHERE user_id = :user_id AND isbn = :isbn", 
+                    "SELECT * FROM reviews WHERE user_id = :user_id AND isbn = :isbn",
                     {"user_id": user_id, "isbn": isbn})
 
             # If they haven't then commit the review into the database and return the user to the
@@ -210,13 +210,13 @@ def book_details():
             reviews = db.execute("SELECT * FROM reviews WHERE isbn=:isbn", {"isbn": isbn})
             db.commit()
 
-            return render_template("book_page.html", reviews=reviews, title=title, author=author, 
+            return render_template("book_page.html", reviews=reviews, title=title, author=author,
             publish_date=year, isbn=isbn, ratings_count=ratings_count, average_rating=average_rating)
 
-        except:        
+        except:
         # If the user has already reviewed the book then display an error message
-            return render_template("book_page.html", reviews=reviews, title=title, author=author, 
-            publish_date=year, isbn=isbn, ratings_count=ratings_count, average_rating=average_rating, 
+            return render_template("book_page.html", reviews=reviews, title=title, author=author,
+            publish_date=year, isbn=isbn, ratings_count=ratings_count, average_rating=average_rating,
             error_message="You have already reviewed this book")
 
 @app.route("/api/<isbn>", methods=["GET"])
@@ -233,7 +233,7 @@ def api_json(isbn):
         review_count = book_stats[0]
         average_score = book_stats[1]
 
-        return jsonify(isbn=isbn, title=title, author=author, year=year, 
+        return jsonify(isbn=isbn, title=title, author=author, year=year,
         review_count=review_count, average_score=(int(average_score*1000)/1000))
 
     # If the book is not in the database return a 404 error
