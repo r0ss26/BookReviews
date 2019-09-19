@@ -224,17 +224,25 @@ def api_json(isbn):
     try:
 
         # Get book details and review statistics to display
-        book_request = db.execute("SELECT reviews.isbn, title, author, year FROM books JOIN reviews ON books.isbn=reviews.isbn WHERE reviews.isbn=:isbn", {"isbn": isbn}).fetchone()
+        # book_request = db.execute("SELECT reviews.isbn, title, author, year FROM books JOIN reviews ON books.isbn=reviews.isbn WHERE reviews.isbn=:isbn", {"isbn": isbn}).fetchone()
+        book_request = db.execute("SELECT isbn, title, author, year FROM books WHERE isbn=:isbn", {"isbn": isbn}).fetchone()
         book_stats = db.execute("SELECT COUNT(*) AS review_count, AVG(star_rating) AS average_score FROM reviews WHERE isbn=:isbn", {"isbn": isbn}).fetchone()
         isbn = book_request[0]
         title = book_request[1]
         author = book_request[2]
         year = book_request[3]
-        review_count = book_stats[0]
-        average_score = book_stats[1]
+
+        # Check that the book hasreviews to calculate statistics from
+        if book_stats[1] is not None:
+            review_count = book_stats[0]
+            average_score = (int(book_stats[1])*1000)/1000
+        # Otherwise the book has no reviews
+        else:
+            review_count = 0
+            average_score = 0
 
         return jsonify(isbn=isbn, title=title, author=author, year=year,
-        review_count=review_count, average_score=(int(average_score*1000)/1000))
+                    review_count=review_count, average_score=average_score)
 
     # If the book is not in the database return a 404 error
     except:
