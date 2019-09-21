@@ -25,14 +25,7 @@ db = scoped_session(sessionmaker(bind=engine))
 
 @app.route("/")
 def index():
-
-    # If user is not logged in then redirect them to the sign in page
-    if not session.get("user_id"):
-        return redirect("/signin")
-    else:
-
-        # If user is signed in take them to the search page
-        return redirect("/search")
+    return redirect("/search")
 
 @app.route("/register", methods=["GET", "POST"])
 def register():
@@ -104,7 +97,6 @@ def signout():
     return redirect("/")
 
 @app.route("/search", methods=["GET", "POST"])
-@login_required
 def search():
 
     # If request method is GET, show user the search form
@@ -135,7 +127,6 @@ def search():
         return redirect(url_for("search_results"))
 
 @app.route("/results", methods=["GET"])
-@login_required
 def search_results():
 
         # If the the search returned no results then redirect the user to the search page
@@ -148,7 +139,6 @@ def search_results():
             return render_template("search_results.html", result=session["result"])
 
 @app.route("/book_page", methods=["GET", "POST"])
-@login_required
 def book_details():
 
     # Get variables from query string and get user id from session
@@ -156,7 +146,8 @@ def book_details():
     author = request.args.get("author")
     year = request.args.get("year")
     isbn = request.args.get("isbn")
-    user_id = session['user_id']
+    if session.get('user_id'):
+        user_id = session['user_id']
 
     # Get review details from goodreads as JSON
     review_counts = requests.get("https://www.goodreads.com/book/review_counts.json",
@@ -183,6 +174,10 @@ def book_details():
 
     # Otherwise the request method is "POST" and the user has submitted a review
     else:
+
+        # Check the user is logged in, otherwise redirect to the singin page
+        if session.get('user_id') is None:
+            return redirect(url_for('signin', next=request.url))
 
         # Check that user input a star rating
         if not request.form.get("star_rating"):
